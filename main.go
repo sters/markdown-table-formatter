@@ -1,5 +1,0 @@
-package markdowntableformatter
-
-func main() {
-
-}
