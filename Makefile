@@ -24,9 +24,4 @@ build:
 .PHONY: run
 run:
 	@go run cmd/main.go
-
-.PHONY: ci
-ci:
-	make dep
-	make cover
 	
