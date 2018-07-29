@@ -1,5 +1,5 @@
 builds:
-  - binary: sters
+  - binary: markdown-table-formatter
     goos:
       - windows
       - darwin
