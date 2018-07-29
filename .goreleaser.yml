@@ -1,5 +1,7 @@
 builds:
-  - binary: markdown-table-formatter
+  -
+    main: ./cmd/main.go
+    binary: markdown-table-formatter
     goos:
       - windows
       - darwin
