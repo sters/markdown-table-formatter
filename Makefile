@@ -1,5 +1,5 @@
 
-BUILD_DIR=./
+BUILD_DIR=./build
 
 .PHONY: test
 test:
@@ -7,7 +7,7 @@ test:
 
 .PHONY: build
 build:
-	@go build -o $(BUILD_DIR)/buld/markdown-table-formatter
+	@go build -o $(BUILD_DIR)/markdown-table-formatter
 
 .PHONY: run
 run:
