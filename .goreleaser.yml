@@ -17,4 +17,4 @@ archive:
 release:
   github:
     owner: sters
-    name: sters
+    name: markdown-table-formatter
