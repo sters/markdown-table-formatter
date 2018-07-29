@@ -25,6 +25,10 @@
 #   unused-packages = true
 
 
+[[constraint]]
+  name = "github.com/ToQoz/gopwt"
+  version = "2.1.0"
+
 [prune]
   go-tests = true
   unused-packages = true
