@@ -29,5 +29,5 @@ run:
 ci:
 	make dep
 	make cover
-	bash <(curl -s https://codecov.io/bash)
+	@bash <$(shell curl -s https://codecov.io/bash)
 	
