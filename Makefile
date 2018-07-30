@@ -11,7 +11,7 @@ dep-update:
 
 .PHONY: cover
 cover:
-	@go test -coverpkg=./... -coverprofile=coverage.txt ./...
+	@GOPWT_OFF=1 go test -race -coverpkg=./... -coverprofile=coverage.txt ./...
 
 .PHONY: test
 test:
