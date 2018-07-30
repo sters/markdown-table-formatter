@@ -209,6 +209,32 @@ func TestFindTables2(t *testing.T) {
 	}
 }
 
+func TestFindTables3(t *testing.T) {
+	resultsList := findTables(`
+		# header
+		[Github](https://github.com/)
+
+		|head1|head2|
+		|-----|-----------|
+		|fiiiiiiiit|ho|aaaa|
+		|a|bbb               |
+	`)
+
+	wantsList := [][]int{
+		[]int{3, 6},
+	}
+
+	assert.Require(t, len(resultsList) == 1)
+
+	for i, results := range resultsList {
+		assert.Require(t, len(results) == 2)
+
+		for j, result := range results {
+			assert.Require(t, wantsList[i][j] == result)
+		}
+	}
+}
+
 func TestExtractTables(t *testing.T) {
 	result := extractTables(`
 		|head1|head2|

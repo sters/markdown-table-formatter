@@ -134,7 +134,7 @@ func findTables(text string) [][]int {
 		}
 	}
 
-	if startLine != -1 && startLine+1 < lineIdx {
+	if startLine != -1 && startLine+1 <= lineIdx {
 		results = append(results, []int{startLine, lineIdx})
 	}
 
