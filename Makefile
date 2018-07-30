@@ -9,13 +9,17 @@ dep:
 dep-update:
 	dep ensure -v -update ./...
 
-.PHONY: cover
-cover:
-	@GOPWT_OFF=1 go test -race -coverpkg=./... -coverprofile=coverage.txt ./...
+.PHONY: fmt
+fmt:
+	@gofmt ./...
 
 .PHONY: test
 test:
 	@go test ./...
+
+.PHONY: cover
+cover:
+	@GOPWT_OFF=1 go test -race -coverpkg=./... -coverprofile=coverage.txt ./...
 
 .PHONY: test-run
 test-run:
@@ -28,4 +32,3 @@ build:
 .PHONY: run
 run:
 	@go run main.go
-	
