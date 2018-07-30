@@ -15,7 +15,11 @@ cover:
 
 .PHONY: test
 test:
-	@go test ./
+	@go test ./...
+
+.PHONY: test-run
+test-run:
+	@cat example.md | make run | diff -u example.md -; true
 
 .PHONY: build
 build:
@@ -23,5 +27,5 @@ build:
 
 .PHONY: run
 run:
-	@go run cmd/main.go
+	@go run main.go
 	

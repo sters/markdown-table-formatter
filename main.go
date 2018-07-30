@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	markdowntableformatter "github.com/sters/markdown-table-formatter"
+	markdowntableformatter "github.com/sters/markdown-table-formatter/formatter"
 )
 
 func main() {
