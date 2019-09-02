@@ -111,7 +111,7 @@ func TestGetHasSeparatorLine(t *testing.T) {
 	assert.Require(t, getHasSeparatorLine(target) == false)
 }
 
-func TestGetMaxLine(t *testing.T) {
+func TestGetMaxLength(t *testing.T) {
 	var target [][]string
 	var maxLength []int
 	var want []int
@@ -132,6 +132,27 @@ func TestGetMaxLine(t *testing.T) {
 	}
 }
 
+func TestGetMaxLength2(t *testing.T) {
+	var target [][]string
+	var maxLength []int
+	var want []int
+
+	target = [][]string{
+		[]string{"head1", "head2"},
+		[]string{"----------------------", "------"},
+		[]string{"こんにちは", "ho"},
+		[]string{"a", "bbb"},
+	}
+	maxLength = getMaxLength(target)
+
+	want = []int{10, 5} // こんにちは => 10, head2 => 5
+
+	assert.Require(t, len(maxLength) == 2)
+	for i, length := range maxLength {
+		assert.Require(t, length == want[i])
+	}
+}
+
 func TestFixColumnSize(t *testing.T) {
 	target := ""
 	target += "|head1|head2|" + "\n"
@@ -144,6 +165,23 @@ func TestFixColumnSize(t *testing.T) {
 	want += "|head1     |head2|    |" + "\n"
 	want += "|----------|-----|----|" + "\n"
 	want += "|fiiiiiiiit|ho   |aaaa|" + "\n"
+	want += "|a         |bbb  |    |" + "\n"
+
+	assert.Require(t, result == want)
+}
+
+func TestFixColumnSize2(t *testing.T) {
+	target := ""
+	target += "|head1|head2|" + "\n"
+	target += "|-----|-----------|" + "\n"
+	target += "|こんにちは|ho|aaaa|" + "\n"
+	target += "|a|bbb               |" + "\n"
+	result := fixColumnSize(target)
+
+	want := ""
+	want += "|head1     |head2|    |" + "\n"
+	want += "|----------|-----|----|" + "\n"
+	want += "|こんにちは|ho   |aaaa|" + "\n"
 	want += "|a         |bbb  |    |" + "\n"
 
 	assert.Require(t, result == want)
@@ -260,6 +298,9 @@ func TestExecute(t *testing.T) {
 	
 	|head1|head2|
 	|a|bbb               |
+
+	|ヘッダー1|ヘッダーツー|
+	|こんにちは|Hello, 世界               |
 	
 	// notable
 	|head1|head2|
@@ -276,6 +317,9 @@ func TestExecute(t *testing.T) {
 	
 	|head1|head2|
 	|a    |bbb  |
+
+	|ヘッダー1 |ヘッダーツー|
+	|こんにちは|Hello, 世界 |
 	
 	// notable
 	|head1|head2|

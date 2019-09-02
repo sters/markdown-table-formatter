@@ -47,6 +47,18 @@ func getHasSeparatorLine(lines [][]string) bool {
 	return has
 }
 
+func calculateLength(str string) int {
+	length := 0
+	for _, c := range []rune(str) {
+		if len(string(c)) > 2 {
+			length += 2
+		} else {
+			length++
+		}
+	}
+	return length
+}
+
 func getMaxLength(lines [][]string) []int {
 	var maxLength []int
 	hasSeparatorLine := getHasSeparatorLine(lines)
@@ -57,8 +69,7 @@ func getMaxLength(lines [][]string) []int {
 		}
 
 		for columnIdx, column := range line {
-			length := len(column)
-
+			length := calculateLength(column)
 			if len(maxLength) <= columnIdx {
 				maxLength = append(maxLength, length)
 			} else if maxLength[columnIdx] < length {
@@ -94,8 +105,9 @@ func fixColumnSize(text string) string {
 				lines[lineIdx][columnIdx] = strings.Repeat("-", length)
 			} else {
 				lines[lineIdx][columnIdx] = fmt.Sprintf(
-					fmt.Sprintf("%%-%dv", length),
+					"%s%s",
 					column,
+					strings.Repeat(" ", length-calculateLength(column)),
 				)
 			}
 		}
