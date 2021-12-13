@@ -1,20 +1,11 @@
 package markdowntableformatter
 
 import (
-	"flag"
-	"os"
 	"strings"
 	"testing"
 
-	"github.com/ToQoz/gopwt"
-	"github.com/ToQoz/gopwt/assert"
+	"github.com/stretchr/testify/assert"
 )
-
-func TestMain(m *testing.M) {
-	flag.Parse()
-	gopwt.Empower()
-	os.Exit(m.Run())
-}
 
 func TestSplitLine(t *testing.T) {
 	result := splitLine(`
@@ -35,10 +26,10 @@ func TestSplitLine(t *testing.T) {
 		"|a|bbb               |",
 	}
 
-	assert.Require(t, len(result) == 6)
+	assert.Len(t, result, 6)
 
 	for i, r := range result {
-		assert.Require(t, r == want[i])
+		assert.Equal(t, want[i], r)
 	}
 }
 
@@ -46,26 +37,26 @@ func TestSplitColumn(t *testing.T) {
 	var result []string
 
 	result = splitColumn("# header")
-	assert.Require(t, len(result) == 1)
-	assert.Require(t, result[0] == "# header")
+	assert.Len(t, result, 1)
+	assert.Equal(t, "# header", result[0])
 
 	result = splitColumn("|head1|head2|")
-	assert.Require(t, len(result) == 2)
-	assert.Require(t, result[0] == "head1")
-	assert.Require(t, result[1] == "head2")
+	assert.Len(t, result, 2)
+	assert.Equal(t, "head1", result[0])
+	assert.Equal(t, "head2", result[1])
 
 	result = splitColumn("|head1               |           head2|")
-	assert.Require(t, len(result) == 2)
-	assert.Require(t, result[0] == "head1")
-	assert.Require(t, result[1] == "head2")
+	assert.Len(t, result, 2)
+	assert.Equal(t, "head1", result[0])
+	assert.Equal(t, "head2", result[1])
 }
 
 func TestCheckTable(t *testing.T) {
-	assert.Require(t, checkTable("# header") == false)
-	assert.Require(t, checkTable("[github](https://github.com/)") == false)
-	assert.Require(t, checkTable("| hogehoge") == false)
-	assert.Require(t, checkTable("|head1|head2|") == true)
-	assert.Require(t, checkTable("|-----|") == true)
+	assert.False(t, checkTable("# header"))
+	assert.False(t, checkTable("[github](https://github.com/)"))
+	assert.False(t, checkTable("| hogehoge"))
+	assert.True(t, checkTable("|head1|head2|"))
+	assert.True(t, checkTable("|-----|"))
 }
 
 func TestGetSeparateTable(t *testing.T) {
@@ -77,17 +68,17 @@ func TestGetSeparateTable(t *testing.T) {
 	`)
 
 	want := [][]string{
-		[]string{"head1", "head2"},
-		[]string{"-----", "-----------"},
-		[]string{"fiiiiiiiit", "ho"},
-		[]string{"a", "bbb"},
+		{"head1", "head2"},
+		{"-----", "-----------"},
+		{"fiiiiiiiit", "ho"},
+		{"a", "bbb"},
 	}
 
-	assert.Require(t, len(result) == 4)
+	assert.Len(t, result, 4)
 
 	for lineIdx, line := range result {
 		for columnIdx, column := range line {
-			assert.Require(t, column == want[lineIdx][columnIdx])
+			assert.Equal(t, want[lineIdx][columnIdx], column)
 		}
 	}
 }
@@ -96,19 +87,19 @@ func TestGetHasSeparatorLine(t *testing.T) {
 	var target [][]string
 
 	target = [][]string{
-		[]string{"head1", "head2"},
-		[]string{"-----", "-----------"},
-		[]string{"fiiiiiiiit", "ho"},
-		[]string{"a", "bbb"},
+		{"head1", "head2"},
+		{"-----", "-----------"},
+		{"fiiiiiiiit", "ho"},
+		{"a", "bbb"},
 	}
-	assert.Require(t, getHasSeparatorLine(target) == true)
+	assert.True(t, getHasSeparatorLine(target))
 
 	target = [][]string{
-		[]string{"head1", "head2"},
-		[]string{"fiiiiiiiit", "ho"},
-		[]string{"a", "bbb"},
+		{"head1", "head2"},
+		{"fiiiiiiiit", "ho"},
+		{"a", "bbb"},
 	}
-	assert.Require(t, getHasSeparatorLine(target) == false)
+	assert.False(t, getHasSeparatorLine(target))
 }
 
 func TestGetMaxLength(t *testing.T) {
@@ -117,18 +108,18 @@ func TestGetMaxLength(t *testing.T) {
 	var want []int
 
 	target = [][]string{
-		[]string{"head1", "head2"},
-		[]string{"----------------------", "------"},
-		[]string{"fiiiiiiiit", "ho"},
-		[]string{"a", "bbb"},
+		{"head1", "head2"},
+		{"----------------------", "------"},
+		{"fiiiiiiiit", "ho"},
+		{"a", "bbb"},
 	}
 	maxLength = getMaxLength(target)
 
 	want = []int{10, 5} // fiiiiiiiit => 10, head2 => 5
 
-	assert.Require(t, len(maxLength) == 2)
+	assert.Len(t, maxLength, 2)
 	for i, length := range maxLength {
-		assert.Require(t, length == want[i])
+		assert.Equal(t, want[i], length)
 	}
 }
 
@@ -138,18 +129,18 @@ func TestGetMaxLength2(t *testing.T) {
 	var want []int
 
 	target = [][]string{
-		[]string{"head1", "head2"},
-		[]string{"----------------------", "------"},
-		[]string{"こんにちは", "ho"},
-		[]string{"a", "bbb"},
+		{"head1", "head2"},
+		{"----------------------", "------"},
+		{"こんにちは", "ho"},
+		{"a", "bbb"},
 	}
 	maxLength = getMaxLength(target)
 
 	want = []int{10, 5} // こんにちは => 10, head2 => 5
 
-	assert.Require(t, len(maxLength) == 2)
+	assert.Len(t, maxLength, 2)
 	for i, length := range maxLength {
-		assert.Require(t, length == want[i])
+		assert.Equal(t, want[i], length)
 	}
 }
 
@@ -167,7 +158,7 @@ func TestFixColumnSize(t *testing.T) {
 	want += "|fiiiiiiiit|ho   |aaaa|" + "\n"
 	want += "|a         |bbb  |    |" + "\n"
 
-	assert.Require(t, result == want)
+	assert.Equal(t, want, result)
 }
 
 func TestFixColumnSize2(t *testing.T) {
@@ -184,7 +175,7 @@ func TestFixColumnSize2(t *testing.T) {
 	want += "|こんにちは|ho   |aaaa|" + "\n"
 	want += "|a         |bbb  |    |" + "\n"
 
-	assert.Require(t, result == want)
+	assert.Equal(t, want, result)
 }
 
 func TestFindTables(t *testing.T) {
@@ -196,7 +187,7 @@ func TestFindTables(t *testing.T) {
 		|-----|-----------|
 		|fiiiiiiiit|ho|aaaa|
 		|a|bbb               |
-		
+
 		|head1|head2|
 		|a|bbb               |
 
@@ -205,17 +196,17 @@ func TestFindTables(t *testing.T) {
 	`)
 
 	wantsList := [][]int{
-		[]int{3, 6},
-		[]int{8, 9},
+		{3, 6},
+		{8, 9},
 	}
 
-	assert.Require(t, len(resultsList) == 2)
+	assert.Len(t, resultsList, 2)
 
 	for i, results := range resultsList {
-		assert.Require(t, len(results) == 2)
+		assert.Len(t, results, 2)
 
 		for j, result := range results {
-			assert.Require(t, wantsList[i][j] == result)
+			assert.Equal(t, wantsList[i][j], result)
 		}
 	}
 }
@@ -228,21 +219,21 @@ func TestFindTables2(t *testing.T) {
 	|--------------|------|
 	|its|confusing              |markdown|
 	|table   |so|crazy|table|.|
-	
-	Try to use: [this](https://github.com/sters/markdown-table-formatter)	
+
+	Try to use: [this](https://github.com/sters/markdown-table-formatter)
 	`)
 
 	wantsList := [][]int{
-		[]int{2, 5},
+		{2, 5},
 	}
 
-	assert.Require(t, len(resultsList) == 1)
+	assert.Len(t, resultsList, 1)
 
 	for i, results := range resultsList {
-		assert.Require(t, len(results) == 2)
+		assert.Len(t, results, 2)
 
 		for j, result := range results {
-			assert.Require(t, wantsList[i][j] == result)
+			assert.Equal(t, wantsList[i][j], result)
 		}
 	}
 }
@@ -259,16 +250,16 @@ func TestFindTables3(t *testing.T) {
 	`)
 
 	wantsList := [][]int{
-		[]int{3, 6},
+		{3, 6},
 	}
 
-	assert.Require(t, len(resultsList) == 1)
+	assert.Len(t, resultsList, 1)
 
 	for i, results := range resultsList {
-		assert.Require(t, len(results) == 2)
+		assert.Len(t, results, 2)
 
 		for j, result := range results {
-			assert.Require(t, wantsList[i][j] == result)
+			assert.Equal(t, wantsList[i][j], result)
 		}
 	}
 }
@@ -279,10 +270,10 @@ func TestExtractTables(t *testing.T) {
 		|-----|-----------|
 		|fiiiiiiiit|ho|aaaa|
 		|a|bbb               |
-		
+
 		|head1|head2|
 		|a|bbb               |
-		
+
 		// notable
 		|head1|head2|
 	`)
@@ -300,14 +291,14 @@ func TestExtractTables(t *testing.T) {
 		`,
 	}
 
-	assert.Require(t, len(result) == 2)
+	assert.Len(t, result, 2)
 
 	for i, table := range result {
 		resultLines := strings.Split(table, "\n")
 		wantLines := strings.Split(strings.TrimSpace(want[i]), "\n")
 
 		for j, resultLint := range resultLines {
-			assert.Require(t, strings.TrimSpace(resultLint) == strings.TrimSpace(wantLines[j]))
+			assert.Equal(t, strings.TrimSpace(wantLines[j]), strings.TrimSpace(resultLint))
 		}
 	}
 }
@@ -321,13 +312,13 @@ func TestExecute(t *testing.T) {
 	|-----|-----------|
 	|fiiiiiiiit|ho|aaaa|
 	|a|bbb               |
-	
+
 	|head1|head2|
 	|a|bbb               |
 
 	|ヘッダー1|ヘッダーツー|
 	|こんにちは|Hello, 世界               |
-	
+
 	// notable
 	|head1|head2|
 	`)
@@ -340,13 +331,13 @@ func TestExecute(t *testing.T) {
 	|----------|-----|----|
 	|fiiiiiiiit|ho   |aaaa|
 	|a         |bbb  |    |
-	
+
 	|head1|head2|
 	|a    |bbb  |
 
 	|ヘッダー1 |ヘッダーツー|
 	|こんにちは|Hello, 世界 |
-	
+
 	// notable
 	|head1|head2|
 	`
@@ -354,12 +345,12 @@ func TestExecute(t *testing.T) {
 	resultSplit := strings.Split(strings.TrimSpace(result), "\n")
 	wantSplit := strings.Split(strings.TrimSpace(want), "\n")
 
-	assert.Require(t, len(resultSplit) == len(wantSplit))
+	assert.Len(t, resultSplit, len(wantSplit))
 
 	for idx, resultLine := range resultSplit {
 		a := strings.TrimSpace(resultLine)
 		b := strings.TrimSpace(wantSplit[idx])
-		assert.Require(t, a == b)
+		assert.Equal(t, b, a)
 	}
 }
 
@@ -371,8 +362,8 @@ func TestExecute2(t *testing.T) {
 	|--------------|------|
 	|its|confusing              |markdown|
 	|table   |so|crazy|table|.|
-	
-	Try to use: [this](https://github.com/sters/markdown-table-formatter)	
+
+	Try to use: [this](https://github.com/sters/markdown-table-formatter)
 	`)
 
 	want := `
@@ -382,18 +373,18 @@ func TestExecute2(t *testing.T) {
 	|-----|---------|--------|-----|-|
 	|its  |confusing|markdown|     | |
 	|table|so       |crazy   |table|.|
-	
+
 	Try to use: [this](https://github.com/sters/markdown-table-formatter)
 	`
 
 	resultSplit := strings.Split(strings.TrimSpace(result), "\n")
 	wantSplit := strings.Split(strings.TrimSpace(want), "\n")
 
-	assert.Require(t, len(resultSplit) == len(wantSplit))
+	assert.Len(t, resultSplit, len(wantSplit))
 
 	for idx, resultLine := range resultSplit {
 		a := strings.TrimSpace(resultLine)
 		b := strings.TrimSpace(wantSplit[idx])
-		assert.Require(t, a == b)
+		assert.Equal(t, b, a)
 	}
 }
