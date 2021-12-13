@@ -1,34 +1,33 @@
+export GOBIN := $(PWD)/bin
+export PATH := $(GOBIN):$(PATH)
 
-BUILD_DIR=./build
+TOOLS=$(shell cat tools/tools.go | egrep '^\s_ '  | awk '{ print $$2 }')
 
-.PHONY: dep
-dep:
-	dep ensure -v
-
-.PHONY: dep-update
-dep-update:
-	dep ensure -v -update ./...
-
-.PHONY: fmt
-fmt:
-	@gofmt ./...
-
-.PHONY: test
-test:
-	@go test ./...
-
-.PHONY: cover
-cover:
-	@GOPWT_OFF=1 go test -race -coverpkg=./... -coverprofile=coverage.txt ./...
-
-.PHONY: test-run
-test-run:
-	@cat example.md | make run | diff -u example.md -; true
-
-.PHONY: build
-build:
-	@go build -o $(BUILD_DIR)/markdown-table-formatter
+.PHONY: bootstrap-tools
+bootstrap-tools:
+	@echo "Installing: " $(TOOLS)
+	@go install $(TOOLS)
 
 .PHONY: run
 run:
-	@go run main.go
+	go run main.go $(ARGS)
+
+.PHONY: lint
+lint:
+	$(GOBIN)/golangci-lint run -v ./...
+
+.PHONY: lint-fix
+lint-fix:
+	$(GOBIN)/golangci-lint run --fix -v ./...
+
+.PHONY: test
+test:
+	go test -v -race ./...
+
+.PHONY: cover
+cover:
+	go test -v -race -coverpkg=./... -coverprofile=coverage.txt ./...
+
+.PHONY: tidy
+tidy:
+	go mod tidy
