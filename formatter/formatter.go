@@ -29,7 +29,7 @@ func checkTable(text string) bool {
 }
 
 func getSeparateTable(text string) [][]string {
-	var lines [][]string
+	lines := [][]string{}
 
 	for _, line := range splitLine(text) {
 		lines = append(lines, splitColumn(line))
@@ -49,8 +49,8 @@ func getHasSeparatorLine(lines [][]string) bool {
 
 func calculateLength(str string) int {
 	length := 0
-	for _, c := range []rune(str) {
-		if len(string(c)) > 2 {
+	for _, c := range str {
+		if len(string(c)) > 2 { //nolint
 			length += 2
 		} else {
 			length++
@@ -60,7 +60,7 @@ func calculateLength(str string) int {
 }
 
 func getMaxLength(lines [][]string) []int {
-	var maxLength []int
+	maxLength := []int{}
 	hasSeparatorLine := getHasSeparatorLine(lines)
 
 	for lineIdx, line := range lines {
@@ -88,7 +88,7 @@ func fixColumnSize(text string) string {
 	// check has separator line
 	hasSeparatorLine := getHasSeparatorLine(lines)
 
-	// find max lenght per columns
+	// find max length per columns
 	maxLength := getMaxLength(lines)
 
 	// fix length
@@ -157,7 +157,7 @@ func extractTables(text string) []string {
 	lines := splitLine(text)
 	tablePositions := findTables(text)
 
-	var results []string
+	results := make([]string, 0, len(tablePositions))
 	for _, position := range tablePositions {
 		start := position[0]
 		end := position[1] + 1
@@ -171,7 +171,7 @@ func extractTables(text string) []string {
 }
 
 func Execute(text string) string {
-	var fixedTable []string
+	fixedTable := []string{}
 	for _, table := range extractTables(text) {
 		fixedTable = append(fixedTable, fixColumnSize(table))
 	}
